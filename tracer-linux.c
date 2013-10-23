@@ -51,10 +51,10 @@ static void process_events(int fd, int fd_d)
 static int check_event(int fd)
 {
 	fd_set rfds;
-	FD_ZERO (&rfds);
-	FD_SET (fd, &rfds);
+	FD_ZERO(&rfds);
+	FD_SET(fd, &rfds);
 
-	return select (FD_SETSIZE, &rfds, NULL, NULL, NULL);
+	return select(FD_SETSIZE, &rfds, NULL, NULL, NULL);
 }
 
 int main(int argc, char **argv)
@@ -64,6 +64,8 @@ int main(int argc, char **argv)
 	int fd_d;
 	int ret = 0;
 	int flags = O_RDONLY;
+
+	setvbuf(stdout, NULL, _IONBF, 0);
 
 	while ((opt = getopt(argc, argv, "t")) != -1) {
 		switch (opt) {
