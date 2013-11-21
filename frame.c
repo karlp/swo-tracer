@@ -32,9 +32,10 @@ extern int running;
 static size_t handle_packet(uint8_t *buf, unsigned int offs, ssize_t nr)
 {
     size_t nb = 1;
+    int address = (buf[offs] & ITM_ADDRESS) >> 3;
 
     if (buf[offs] & ITM_HW_SOURCE)
-        printf("HW @ %02X ", (buf[offs] & ITM_ADDRESS) >> 3);
+        printf("HW @ %02X ", address);
 
     switch (buf[offs] & ITM_SIZE) {
         case 0x01:
@@ -44,14 +45,18 @@ static size_t handle_packet(uint8_t *buf, unsigned int offs, ssize_t nr)
             break;
 
         case 0x02:
-            if (offs + 2 < nr)
-                printf("[%02X]", *(uint16_t *)(&buf[offs+1]));
+            if (offs + 2 < nr) {
+                uint16_t val = *(uint16_t *)(&buf[offs+1]);
+                printf("[%d: %d : %02X]\n", address, val, val);
+            }
             nb += sizeof(uint16_t);
             break;
 
         case 0x03:
-            if (offs + 4 < nr)
-                printf("[%04X]", *(uint32_t *)(&buf[offs+1]));
+            if (offs + 4 < nr) {
+                uint32_t val = *(uint32_t *)(&buf[offs+1]);
+                printf("[%d: %d : %04X]\n", address, val, val);
+            }
             nb += sizeof(uint32_t);
             break;
     }
